@@ -24,11 +24,11 @@ bibliography: paper.bib
 
 # Summary
 
-`pylbm` is an open source software written in Python [@pylbm]. It proposes a leading edge implementation of the Lattice Boltzmann Method for 1D/2D/3D problems and has been created to address various communities:
+`pylbm` is an open source software written in Python [@pylbm]. It proposes a leading edge implementation of the lattice Boltzmann method for 1D/2D/3D problems and has been created to address various communities:
 
-- **Mathematicians**: It provides a very pleasant environment in order to test new schemes, understand their mathematical properties, such as stability and consistency and open towards new frontiers in the field such as mesh refinement, equivalent equations...
+- **Mathematicians**: `pylbm` provides a very pleasant and efficient environment in order to test new schemes, understand their mathematical properties, such as stability and consistency and open towards new frontiers in the field such as mesh refinement, equivalent equations...
 - **Physicists**: `pylbm` offers an ideal framework to conduct numerical experiments for various levels of modeling and schemes, without having to dive into the mathematical machinery of LBM schemes. The high level of the proposed algorithm can also allow to go beyond the first test and easily conduct large scales simulations thanks to its parallel capability.
-- **Computer scientists**: In `pylbm`, the Lattice Boltzmann Method is not hard-coded. Advanced tools of code generation, based on a large set of newly developed computer algebra libraries, allow a high level entry by the user of scheme definition and boundary conditions. The `pylbm` software then gererates the resulting numerical code. It is therefore possible to modify the code building kernels to test performance and code optimization on different architectures (AA patern and pull algorithm); the code can also be generated in different languages (C, C++, openCL, …).
+- **Computer scientists**: In `pylbm`, the lattice Boltzmann method is not hard-coded. Advanced tools of code generation, based on a large set of newly developed computer algebra libraries, allow a high level entry by the user of scheme definition and boundary conditions. The `pylbm` software then gererates the resulting numerical code. It is therefore possible to modify the code building kernels to test performance and code optimization on different architectures (AA patern and pull algorithm); the code can also be generated in different languages (C, C++, openCL, …).
 
 The principle feature of `pylbm` is its high flexibility in term of LBM schemes and numerical code implementations. Moreover, it has excellent parallel capabilities and uses MPI for distributed computing and openCL for GPUs.
 
