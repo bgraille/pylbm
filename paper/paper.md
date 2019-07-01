@@ -30,14 +30,63 @@ bibliography: paper.bib
 - **Physicists**: `pylbm` offers an ideal framework to conduct numerical experiments for various levels of modeling and schemes, without having to dive into the mathematical machinery of LBM schemes. The high level of the proposed algorithm can also allow to go beyond the first test and easily conduct large scales simulations thanks to its parallel capability.
 - **Computer scientists**: In `pylbm`, the lattice Boltzmann method is not hard-coded. Advanced tools of code generation, based on a large set of newly developed computer algebra libraries, allow a high level entry by the user of scheme definition and boundary conditions. The `pylbm` software then gererates the resulting numerical code. It is therefore possible to modify the code building kernels to test performance and code optimization on different architectures (AA patern and pull algorithm); the code can also be generated in different languages (C, C++, openCL, …).
 
-The principle feature of `pylbm` is its high flexibility in term of LBM schemes and numerical code implementations. Moreover, it has excellent parallel capabilities and uses MPI for distributed computing and openCL for GPUs.
+The principle feature of `pylbm` is its high flexibility in term of lattice Boltzmann schemes and numerical code implementations. Moreover, it has excellent parallel capabilities and uses MPI for distributed computing and openCL for GPUs.
 
-The generalized d’Humières framework is used to describe the schemes [@dhumiere_generalized_1992]. It's then easy to define your lattice Boltzmann scheme by providing the velocities, equilibrium values and the relaxation parameters, ... Moreover, you can have multiple $D_dQ_q$ schemes for your simulation where $d$ is the dimension and $q$ the number of velocities. That's generally the case when you want to simulate for example thermodynamic fluid flows as in the Rayleigh-Benard test case. But you can also experiment with new types of lattice Boltzmann schemes like vectorized schemes [@graille_approximation_2014] or with relative velocities [@dubois_lattice_2015].
+The generalized multiple-relaxation-time framework is used to describe the schemes [@dhumiere_generalized_1992]. It's then easy to define your lattice Boltzmann scheme by providing the velocities, the moments, their equilibrium values, and the associated relaxation parameters. Moreover, multiple $D_dQ_q$ schemes can be coupled in the simulation  where $d$ is the dimension and $q$ the number of velocities. This formalism is used for example to simulate thermodynamic fluid flows as in the Rayleigh-Benard test case. But you can also experiment with new types of lattice Boltzmann schemes like vectorial schemes [@graille_approximation_2014] or with relative velocities [@dubois_lattice_2015].
 
 `pylbm` will offer in the future releases more tools to help the user to design their lattice Boltzmann schemes and make large simulations with complex geometries.
 
 - **More examples**: we want to give access to various lattice Boltzmann schemes you can find in the litterature. We will add multi-component flows, multi-phase flows, ... in order to have a full gallery of what we can do with LBM. We hope this way the users can improve this list with their own schemes.
 - **Equivalent equations**: the hard part with the LBM is that you never write the physical equations you want to solve but the lattice Boltzmann scheme associated. We will offer the possibility to retrieve the physical equations from the given scheme by doing a Chapman-Enskog expansion for nonlinear equations up to the second order.
 - **Complex geometries**: the geometry in `pylbm` can be described by a union of simple geometry elements like circle, triangle, sphere,... It's not realistic for industrial challenges and we will offer the possibility to use various CAD formats like STL.
+
+In the following sections, we describe the main features of the `pylbm` module: the formal description of the scheme, the tools of analysis (to compute the equivalent equations and to visualize the stability), the possibility to implement your own boundary conditions.
+
+# A formal description of the lattice Boltzmann scheme
+
+The greatest asset of `pylbm` is that the scheme is not harded coded: it is described by a dictionary that contains all the informations of the simulation. 
+Moreover, schemes with multiple distribution functions are simply described with a list of elementary schemes that can be coupled by the equilibrium functions. 
+Each elementary scheme is written in the MRT formalism proposed by d'Humière [@dhumiere_generalized_1992]. 
+
+## MRT formalism
+
+Let us first consider a regular lattice $L$ in dimension $d$ with a mesh size $dx$ and a time step $dt$. The scheme velocity $\lambda$ is then defined by $\lambda = dx/dt$. We introduce a set of $q$ velocities adapted to this lattice $\{v_0, \ldots, v_{q-1}\}$, that is to say that, if $x$ is a point of the lattice $L$, the point $x+v_jdt$ is also on the lattice for every $j\in\{0,\ldots,q{-}1\}$.
+
+The aim of the $DdQq$ scheme is to compute a distribution function vector ${\boldsymbol f} = (f_0,\ldots,f_{q-1})$ on the lattice $L$ at discret values of time. The scheme splits into two phases: the relaxation and the transport. That is, the passage from the time $t$ to the time $t+dt$ consists in the succession of these two phases.
+
+_the relaxation phase_
+
+This phase, also called collision, is local in space: on every site $x$ of the lattice, the values of the vector ${\boldsymbol f}$ are modified, the result after the collision being denoted by ${\boldsymbol f}^\star$. The operator of collision is a linear operator of relaxation toward an equilibrium value denoted ${\boldsymbol f}^{\textrm{eq}}$.
+
+This linear operator is diagonal in a peculiar basis called moments denoted by ${\boldsymbol m} = (m_0,\ldots,m_{q-1})$. The change-of-basis matrix $M$ is such that ${\boldsymbol m} = M{\boldsymbol f}$ and ${\boldsymbol f} = M^{-1}{\boldsymbol m}$. In the basis of the moments, the collision operator then just reads
+
+$$ m_k^\star = m_k - s_k (m_k - m_k^{\textrm{eq}}), \qquad 0\leqslant k\leqslant q{-}1, $$
+
+where $s_k$ is the relaxation parameter associated to the kth moment. The kth moment is said conserved during the collision if the associated relaxation parameter $s_k$ is zero.
+
+By analogy with the kinetic theory, the change-of-basis matrix $M$ is defined by a set of polynomials with $d$ variables $(P_0,\ldots,P_{q-1})$ by
+
+$$ M_{ij} = P_i(v_j). $$
+
+_the transport phase_
+
+This phase just consists in a shift of the indices and reads
+
+$$ f_j(x, t+dt) = f_j^\star(x-v_jdt, t), \qquad 0\leqslant j\leqslant q{-}1. $$
+
+Each elementary scheme is then given by
+the **stencil** of velocities,
+the **conserved moments**,
+the **polynomials** that define the moments,
+the **relaxation parameters**,
+the **equilibrium values** that are functions of the conserved moments.
+
+At our knowledge, `pylbm` is then the only lattice Boltzmann tool for which the user can implement is own scheme without to code inside the module. All the description of the simulation is given in a script file. 
+
+## Symbolic variables
+
+
+
+## relative velocities
 
 # References
